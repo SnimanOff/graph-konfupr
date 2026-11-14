@@ -5,6 +5,9 @@ CLI на Python 3.10+. Читает YAML, скачивает APKINDEX, стро�
 
 Запуск: `python main.py examples/tree.yaml --mode РЕЖИМ`.
 
+Через скрипты: `run.bat examples\tree.yaml --mode РЕЖИМ` (Windows) или
+`sh run.sh examples/tree.yaml --mode РЕЖИМ` (Linux/macOS).
+
 Режимы: `config`, `direct`, `graph`, `order`, `mermaid` (по умолчанию).
 
 Тесты: `python -m unittest discover -s tests`
