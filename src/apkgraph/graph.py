@@ -23,24 +23,33 @@ def build_graph(root, neighbors, max_depth: int, exclude: str = "") -> Graph:
     return graph
 
 
-def load_order(graph: Graph) -> list[Node]:
-    remaining = {node: len(deps) for node, deps in graph.items()}
+def reverse_edges(graph: Graph) -> Graph:
     users: Graph = {node: [] for node in graph}
     for node, deps in graph.items():
         for dep in deps:
             users[dep].append(node)
-    ready = deque(node for node, count in remaining.items() if count == 0)
+    return users
+
+
+def check_complete(graph: Graph, order: list[Node]) -> None:
+    if len(order) != len(graph):
+        cycle = [label(n) for n in graph if n not in order]
+        raise ValueError(f"цикл зависимостей среди: {', '.join(cycle)}")
+
+
+def load_order(graph: Graph) -> list[Node]:
+    remaining = {node: len(deps) for node, deps in graph.items()}
+    users = reverse_edges(graph)
+    ready = deque(node for node, count in remaining.items() if not count)
     order = []
     while ready:
         node = ready.popleft()
         order.append(node)
         for user in users[node]:
             remaining[user] -= 1
-            if remaining[user] == 0:
+            if not remaining[user]:
                 ready.append(user)
-    if len(order) != len(graph):
-        cycle = [label(n) for n in graph if n not in order]
-        raise ValueError(f"цикл зависимостей среди: {', '.join(cycle)}")
+    check_complete(graph, order)
     return order
 
 
